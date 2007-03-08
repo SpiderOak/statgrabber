@@ -22,19 +22,37 @@ $SIG{'ALRM'} = sub {
 	foreach (keys %stat_cnt) {
 		print "$_: $stat_cnt{$_}\n";
 		system("gmetric --name $_ --value $stat_cnt{$_} --type uint32");
+		# Delete stale keys
+		if ($stat_cnt{$_} == 0) {
+			delete $stat_cnt{$_};
+			next;
+		} else {
+			$stat_cnt{$_} = 0;
+		}
 	}
 	foreach (keys %stat_avg) {
-		my $avg = $stat_avg{$_}[0] / $stat_avg{$_}[1];
+		my $avg = ($stat_avg{$_}[1] ?
+			   $stat_avg{$_}[0] / $stat_avg{$_}[1] : 0);
 		print "$_: $avg\n";
 		system("gmetric --name $_ --value $avg --type float");
+		if ($stat_avg{$_}[1] == 0) {
+			delete $stat_avg{$_};
+			next;
+		} else {
+			$stat_avg{$_} = [0,0];
+		}
 	}
 	foreach (keys %stat_acc) {
 		print "$_: $stat_acc{$_}\n";
 		system("gmetric --name $_ --value $stat_acc{$_} --type float");
+		if ($stat_acc{$_} == 0) {
+			delete $stat_acc{$_};
+			next;
+		} else {
+			$stat_acc{$_} = 0;
+		}
 	}
-	%stat_cnt = ();
-	%stat_avg = ();
-	%stat_acc = ();
+	# Pete and repeat were sitting on a fence...
 	alarm 60;
 };
 
