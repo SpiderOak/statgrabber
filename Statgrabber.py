@@ -25,4 +25,4 @@ def average(tag,val):
 
 def accumulate(tag,val):
 	tag = verify_tag(tag)
-	sock.send("%s %s" % (tag,val))
+	sock.send("%s +%s" % (tag,val))
