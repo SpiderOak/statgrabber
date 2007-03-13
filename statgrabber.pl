@@ -2,15 +2,27 @@
 use strict;
 
 use IO::Socket;
+use IO::File;
+use Getopt::Long;
+use Sys::Syslog qw/:standard :macros/;
+use POSIX qw/setsid :fcntl_h/;
 
 # Some config;
 my $port = 9119;
+
+# Parse options
+my ($nofork);
+GetOptions("nofork"	=>	\$nofork);
+
+# Start up logging, daemonize
+openlog('statgrabber', 'ndelay', LOG_DAEMON);
+daemonize('/var/run/statgrabber.pid') unless $nofork;
 
 # Start up a server
 my $sock = IO::Socket::INET->new(LocalPort => $port, Proto => 'udp')
 	or die "IO::Socket: $!";
 
-print "Awaiting UDP messages on port $port\n";
+syslog(LOG_INFO,"Awaiting UDP messages on port $port");
 
 # %stat_* holds the data before flushing out to ganglia once per minute
 my %stat_cnt;		# For counter stats
@@ -95,4 +107,35 @@ while ($running) {
 			$stat_cnt{$tag}++;
 		}
 	}
+}
+
+my ($pidpath, $pidfile);
+sub daemonize {
+        my $pidfilespec = shift;
+        chdir '/' or die "Can't chdir to /: $!";
+        open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
+        open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
+        defined(my $pid = fork) or die "Can't fork: $!";
+        exit if $pid;
+        $pidfile = new IO::File "$pidfilespec",
+		       O_WRONLY|O_TRUNC|O_NOFOLLOW|O_CREAT|O_EXCL;
+        die "Can't open pid-file $pidfilespec: $!"
+		unless (defined($pidfile) and $pidfile->opened);
+        $pidfile->print("$$\n");
+        $pidfile->flush;
+        $pidpath = $pidfilespec;
+        setsid or die "Can't start a new session: $!";
+        open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
+}
+
+sub pidfile_cleanup {
+	if (defined($pidpath)) {
+		unlink $pidpath;
+		$pidfile->close;
+	}
+}
+
+END {
+	pidfile_cleanup;
+	closelog;
 }

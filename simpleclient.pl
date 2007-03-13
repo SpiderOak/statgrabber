@@ -1,17 +1,17 @@
 #!/usr/bin/perl -w
 use strict;
 
-use lib '.';
-use Pandora::Stats;
+use Statgrabber;
 
 foreach (0..4) {
-	Pandora::Stats::count('foo');
+	Statgrabber::count('foo');
 }
 
 foreach (0..4) {
-	Pandora::Stats::average('bar',$_);
+	Statgrabber::average('bar',$_);
 }
 
 foreach (0..4) {
-	Pandora::Stats::accumulate('baz',$_);
+	# Test spaces, also
+	Statgrabber::accumulate('b a z',$_);
 }

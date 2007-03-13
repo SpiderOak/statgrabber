@@ -1,4 +1,4 @@
-package Pandora::Stats;
+package Statgrabber;
 use strict;
 
 use IO::Socket;
@@ -20,7 +20,7 @@ sub verify_tag {
 
 sub count {
 	my $tag = verify_tag(shift);
-	$sock->send("$tag");
+	$sock->send($tag);
 }
 
 sub average {
