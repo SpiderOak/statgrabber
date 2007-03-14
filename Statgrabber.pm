@@ -3,7 +3,7 @@ use strict;
 
 use IO::Socket;
 
-# Some config;
+# Some config
 my $port = 9119;
 my $iaddr = inet_aton('127.1');
 
@@ -34,7 +34,5 @@ sub accumulate {
 	my $val = shift;
 	$sock->send("$tag +$val");
 }
-
-#*main::pandora_stat = *Pandora::Stats::stat;
 
 1;

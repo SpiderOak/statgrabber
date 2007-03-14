@@ -1,7 +1,7 @@
 import socket
 import re
 
-# Some config;
+# Some config
 port = 9119
 iaddr = '127.1'
 
