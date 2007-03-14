@@ -13,7 +13,7 @@ python code.
 1. Importing the library
 
 PL: use Statgrabber;
-PY: import Statgrabber;
+PY: import Statgrabber
 
 2. Sending statistics
 
