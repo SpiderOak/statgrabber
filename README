@@ -1,1 +1,35 @@
 statgrabber - A generic statistics collection system for ganglia
+
+Assuming the collection daemon is up and running (and it should be),
+sending statistics to statgrabber is very simple. A 'tag' identifies a
+certain statistic, these should be short alphanumeric identifiers.
+Spaces are OK, they will be converted to underscores. Statgrabber works
+internally on a period of one minute. At the end of the period,
+statistics are flushed to ganglia and zeroed.
+
+Lines beginning with PL are perl code, lines beginning with PY are
+python code.
+
+1. Importing the library
+
+PL: use Statgrabber;
+PY: import Statgrabber;
+
+2. Sending statistics
+
+  a) Counter statistics (incremented once per call)
+
+  PL: Statgrabber::count('tag');
+  PY: Statgrabber.count('tag')
+
+  b) Average statistics (averaged over the period)
+
+  PL: Statgrabber::average('tag',$value);
+  PY: Statgrabber.average('tag',value)
+
+  b) Accumulated statistics (added up over the period)
+
+  PL: Statgrabber::accumulate('tag',$value);
+  PY: Statgrabber.accumulate('tag',value)
+
+For an example of the library in use, see simpleclient.{pl,py}.
