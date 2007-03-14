@@ -13,5 +13,7 @@ install:
 	-rm -f $(PREFIX)/sbin/statgrabber $(PREFIX)/sbin/statgrabber.pl
 	cp statgrabber.pl $(PREFIX)/sbin/
 	ln -s statgrabber.pl $(PREFIX)/sbin/statgrabber
+	mkdir -p $(PERL_LIB_DIR)
 	cp Statgrabber.pm $(PERL_LIB_DIR)
+	mkdir -p $(PYTHON_LIB_DIR)
 	cp Statgrabber.py $(PYTHON_LIB_DIR)
