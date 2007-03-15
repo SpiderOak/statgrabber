@@ -32,4 +32,14 @@ PY: import Statgrabber
   PL: Statgrabber::accumulate('tag',$value);
   PY: Statgrabber.accumulate('tag',value)
 
+  c) Elapsed time (averaged)
+
+  PL: $timer = Statgrabber::start('tag');
+  PL: # Do stuff
+  PL: $timer->finish();
+
+  PY: timer = Statgrabber.start('tag')
+  PY: # Do stuff
+  PL: timer.finish()
+
 For an example of the library in use, see simpleclient.{pl,py}.

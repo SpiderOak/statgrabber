@@ -2,6 +2,7 @@ package Statgrabber;
 use strict;
 
 use IO::Socket;
+use Time::HiRes;
 
 # Some config
 my $port = 9119;
@@ -33,6 +34,26 @@ sub accumulate {
 	my $tag = verify_tag(shift);
 	my $val = shift;
 	$sock->send("$tag +$val");
+}
+
+# Now for some fun stuff... elapsed time statistics!
+
+{ package Statgrabber::timer;
+	sub new {
+		my $class = shift;
+		my $tag = shift;
+		bless {'tag'=>$tag,'t0'=>Time::HiRes::time()}, $class;
+	}
+	sub finish {
+		my $instance = shift;
+		Statgrabber::average($instance->{'tag'},
+				     Time::HiRes::time() - $instance->{'t0'});
+	}
+}
+
+sub start {
+	my $tag = verify_tag(shift);
+	return Statgrabber::timer->new($tag);
 }
 
 1;

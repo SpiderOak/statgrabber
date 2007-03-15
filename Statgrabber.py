@@ -1,5 +1,6 @@
 import socket
 import re
+import time
 
 # Some config
 port = 9119
@@ -26,3 +27,17 @@ def average(tag,val):
 def accumulate(tag,val):
 	tag = verify_tag(tag)
 	sock.send("%s +%s" % (tag,val))
+
+# Now for some fun stuff... elapsed time statistics!
+class sgtimer:
+	t0 = 0
+	tag = None
+	def __init__(self,tag):
+		self.tag = tag
+		self.t0 = time.time()
+	
+	def finish(self):
+		average(self.tag, time.time() - self.t0)
+
+def start(tag):
+	return sgtimer(tag)
