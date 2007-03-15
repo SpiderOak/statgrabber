@@ -40,6 +40,6 @@ PY: import Statgrabber
 
   PY: timer = Statgrabber.start('tag')
   PY: # Do stuff
-  PL: timer.finish()
+  PY: timer.finish()
 
 For an example of the library in use, see simpleclient.{pl,py}.
