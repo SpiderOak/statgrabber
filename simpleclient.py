@@ -6,14 +6,14 @@ import time
 timer = Statgrabber.start('simpleclient elapsed time')
 
 for x in range(0,5):
-	Statgrabber.count('foo')
+    Statgrabber.count('foo')
 
 for x in range(0,5):
-	Statgrabber.average('bar',x)
+    Statgrabber.average('bar',x)
 
 for x in range(0,5):
-	# Test spaces, also
-	Statgrabber.accumulate('b a z',x)
+    # Test spaces, also
+    Statgrabber.accumulate('b a z',x)
 
 time.sleep(1.0)
 timer.finish()
