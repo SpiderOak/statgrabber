@@ -1,5 +1,5 @@
 """
-This file is required to allow "from statsgrabber import Statsgrabber" type
+This file is required to allow "from statgrabber import Statgrabber" type
 imports in python.
 """
 

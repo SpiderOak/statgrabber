@@ -1,11 +1,27 @@
 statgrabber - A generic statistics collection system for ganglia
 
-Assuming the collection daemon is up and running (and it should be),
-sending statistics to statgrabber is very simple. A 'tag' identifies a
-certain statistic, these should be short alphanumeric identifiers.
-Spaces are OK, they will be converted to underscores. Statgrabber works
-internally on a period of one minute. At the end of the period,
-statistics are flushed to ganglia and zeroed.
+== Introduction ==
+
+Statgrabber comes in two parts: a daemon and a set of client libraries.
+Running the daemon is simple, just run 'statgrabber.pl'.  The daemon
+takes one argument, -nofork, which tells it not to daemonize.  The
+daemon prints some status messages to syslog, but is otherwise quiet.  A
+initscript for systems that use a SysV init system (basically everything
+but slackware) is provided in init.d/.
+
+Client libraries are provided for Perl and Python.  'make install'
+should put everything in the right place.  To install the libraries
+only, do 'make install-lib'.  If anyone wants to write client libraries
+for other languages, I'd be happy to include them.
+
+When the collection daemon is up and running, sending statistics to
+statgrabber is very simple.  A 'tag' identifies a certain statistic,
+these should be short alphanumeric identifiers.  Spaces are OK, they
+will be converted to underscores. Statgrabber works internally on a
+period of one minute. At the end of the period, statistics are flushed
+to ganglia and zeroed.
+
+== Examples
 
 Lines beginning with PL are perl code, lines beginning with PY are
 python code.
