@@ -11,12 +11,22 @@ use POSIX qw/setsid :fcntl_h/;
 my $port = 9119;
 
 # Parse options
-my ($nofork);
+my ($nofork,$mcast_if);
 GetOptions("nofork"	=>	\$nofork);
+GetOptions("mcast_if=s" => \$mcast_if);
 
 # Start up logging, daemonize
 openlog('statgrabber', 'ndelay', LOG_DAEMON);
 daemonize('/var/run/statgrabber.pid') unless $nofork;
+
+my $gmetric_mcast_arg;
+
+if ($mcast_if) {
+    $gmetric_mcast_arg="--mcast_if=$mcast_if";
+} else {
+    $gmetric_mcast_arg="";
+}
+    
 
 # Start up a server
 my $sock = IO::Socket::INET->new(LocalPort => $port, Proto => 'udp')
@@ -33,7 +43,7 @@ my %stat_acc;		# For accumulated stats (bandwidth)
 $SIG{'ALRM'} = sub {
 	foreach (keys %stat_cnt) {
 		print "$_: $stat_cnt{$_}\n";
-		system("gmetric --name $_ --value $stat_cnt{$_} --type uint32");
+		system("gmetric --name $_ --value $stat_cnt{$_} --type uint32 $gmetric_mcast_arg");
 		# Delete stale keys
 		if ($stat_cnt{$_} == 0) {
 			delete $stat_cnt{$_};
@@ -46,7 +56,7 @@ $SIG{'ALRM'} = sub {
 		my $avg = ($stat_avg{$_}[1] ?
 			   $stat_avg{$_}[0] / $stat_avg{$_}[1] : 0);
 		print "$_: $avg\n";
-		system("gmetric --name $_ --value $avg --type float");
+		system("gmetric --name $_ --value $avg --type float $gmetric_mcast_arg");
 		if ($stat_avg{$_}[1] == 0) {
 			delete $stat_avg{$_};
 			next;
@@ -56,7 +66,7 @@ $SIG{'ALRM'} = sub {
 	}
 	foreach (keys %stat_acc) {
 		print "$_: $stat_acc{$_}\n";
-		system("gmetric --name $_ --value $stat_acc{$_} --type float");
+		system("gmetric --name $_ --value $stat_acc{$_} --type float $gmetric_mcast_arg");
 		if ($stat_acc{$_} == 0) {
 			delete $stat_acc{$_};
 			next;
