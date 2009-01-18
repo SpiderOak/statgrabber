@@ -12,8 +12,10 @@ my $port = 9119;
 
 # Parse options
 my ($nofork,$mcast_if);
-GetOptions("nofork"	=>	\$nofork);
-GetOptions("mcast_if=s" => \$mcast_if);
+GetOptions(
+    "nofork"	=>	\$nofork,
+    "mcast_if=s" => \$mcast_if
+);
 
 # Start up logging, daemonize
 openlog('statgrabber', 'ndelay', LOG_DAEMON);
